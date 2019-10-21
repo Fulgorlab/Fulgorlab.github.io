@@ -1,260 +1,186 @@
- AOS.init({
- 	duration: 800,
- 	easing: 'slide'
- });
+/* ======================================
+-----------------------------------------
+	The Look - Photo Gallery Template
+	Version: 1.0
+ ---------------------------------------
+ =======================================*/
+
+
+'use strict';
+
+
+$(window).on('load', function() {
+	/*------------------
+		Preloder
+	--------------------*/
+	$(".loader").fadeOut();
+	$("#preloder").delay(400).fadeOut("slow");
+
+});
 
 (function($) {
 
-	"use strict";
+	/*------------------
+		Navigation
+	--------------------*/
+	$('.main-menu').slicknav({
+		appendTo:'.header-warp',
+		closedSymbol: '<i class="fa fa-angle-down"></i>',
+		openedSymbol: '<i class="fa fa-angle-up"></i>'
+	});
 
-	$(window).stellar({
-    responsive: true,
-    parallaxBackgrounds: true,
-    parallaxElements: true,
-    horizontalScrolling: false,
-    hideDistantElements: false,
-    scrollProperty: 'scroll'
-  });
+	/*------------------
+		Background Set
+	--------------------*/
+	$('.set-bg').each(function() {
+		var bg = $(this).data('setbg');
+		$(this).css('background-image', 'url(' + bg + ')');
+	});
 
 
-	var fullHeight = function() {
+	/*------------------
+		Hero Slider
+	--------------------*/
+	var sliderCount;
+	$(".hero-slider").on("initialized.owl.carousel", function(e) {
+		sliderCount = e.item.count;
+		if( sliderCount < 10) {
+			sliderCount = "0" + sliderCount;
+		}
+	}).owlCarousel({
+        loop: true,
+        margin: 0,
+        nav: true,
+        items: 1,
+        dots: false,
+        animateOut: 'fadeOut',
+    	animateIn: 'fadeIn',
+		navText: ['<img src="img/icons/arrow-left-white.png" alt="">', '<img src="img/icons/arrow-right-black.png" alt="">'],
+        smartSpeed: 1200,
+		autoplay: true,
+		mouseDrag: false
+    }).on("changed.owl.carousel", function(e) {
+		
+		var Index = e.item.index - 1;
+		var Count = e.item.count;
+		var PreIndex = Index - 1;
+		var NextIndex = Index + 1;
 
-		$('.js-fullheight').css('height', $(window).height());
-		$(window).resize(function(){
-			$('.js-fullheight').css('height', $(window).height());
-		});
 
-	};
-	fullHeight();
+		if(PreIndex < 0) {
+			PreIndex = Count - 1;
+		}
 
-	// loader
-	var loader = function() {
-		setTimeout(function() { 
-			if($('#ftco-loader').length > 0) {
-				$('#ftco-loader').removeClass('show');
+		if(PreIndex < 1) {
+			PreIndex = Count;
+		}
+
+		if (PreIndex < 10) {
+			PreIndex = "0" + PreIndex;
+		}
+
+		if(NextIndex > Count) {
+			NextIndex = 1;
+		}
+
+		if (NextIndex < 10) {
+			NextIndex = "0" + NextIndex;
+		}
+
+
+		$(".hero-slider .owl-nav button.owl-prev").html('<img src="img/icons/arrow-left-white.png" alt=""> <span> '+ PreIndex +'</span> ');
+		$(".hero-slider .owl-nav button.owl-next").html('<span> '+ NextIndex +' </span> <img src="img/icons/arrow-right-black.png" alt="">');
+	});
+
+	$(".hero-slider .owl-nav button.owl-prev").html('<img src="img/icons/arrow-left-white.png" alt=""> <span> '+ sliderCount +'</span> ');
+
+	$(".hero-slider .owl-nav button.owl-next").html('<span>02</span> <img src="img/icons/arrow-right-black.png" alt="">');
+
+
+	/*------------------
+		Gallery Slider
+	--------------------*/
+	$('.gallery-slider').owlCarousel({
+		loop: true,
+		nav: true,
+		navText: ['<img src="img/icons/arrow-left-black.png" alt="">', '<img src="img/icons/arrow-right-black.png" alt="">'],
+		dots:false,
+		autoplay: true,
+		margin: 99,
+		stagePadding: 183,
+		responsive : {
+			0 : {
+				items: 1,
+				stagePadding: 0,
+				margin: 30,
+			},
+			480 : {
+				items: 2,
+				stagePadding: 0,
+				margin: 30,
+			},
+			768 : {
+				items: 2,
+				stagePadding: 80,
+				margin: 50,
+			},
+			992 : {
+				items: 2,
+				margin: 80,
+				stagePadding: 153,
 			}
-		}, 1);
-	};
-	loader();
-
-	// Scrollax
-   $.Scrollax();
-
-
-   var burgerMenu = function() {
-
-		$('.js-colorlib-nav-toggle').on('click', function(event){
-			event.preventDefault();
-			var $this = $(this);
-
-			if ($('body').hasClass('offcanvas')) {
-				$this.removeClass('active');
-				$('body').removeClass('offcanvas');	
-			} else {
-				$this.addClass('active');
-				$('body').addClass('offcanvas');	
-			}
-		});
-	};
-	burgerMenu();
-
-	// Click outside of offcanvass
-	var mobileMenuOutsideClick = function() {
-
-		$(document).click(function (e) {
-	    var container = $("#colorlib-aside, .js-colorlib-nav-toggle");
-	    if (!container.is(e.target) && container.has(e.target).length === 0) {
-
-	    	if ( $('body').hasClass('offcanvas') ) {
-
-    			$('body').removeClass('offcanvas');
-    			$('.js-colorlib-nav-toggle').removeClass('active');
-			
-	    	}
-	    	
-	    }
-		});
-
-		$(window).scroll(function(){
-			if ( $('body').hasClass('offcanvas') ) {
-
-    			$('body').removeClass('offcanvas');
-    			$('.js-colorlib-nav-toggle').removeClass('active');
-			
-	    	}
-		});
-
-	};
-	mobileMenuOutsideClick();
-
-	var carousel = function() {
-		$('.home-slider').owlCarousel({
-	    loop:true,
-	    autoplay: true,
-	    margin:0,
-	    animateOut: 'fadeOut',
-	    animateIn: 'fadeIn',
-	    nav:false,
-	    autoplayHoverPause: false,
-	    items: 1,
-	    navText : ["<span class='ion-md-arrow-back'></span>","<span class='ion-chevron-right'></span>"],
-	    responsive:{
-	      0:{
-	        items:1
-	      },
-	      600:{
-	        items:1
-	      },
-	      1000:{
-	        items:1
-	      }
-	    }
-		});
-
-		$('.author-slider').owlCarousel({
-			autoplay: true,
-			loop: true,
-			items:1,
-			margin: 30,
-			stagePadding: 0,
-			nav: true,
-			dots: true,
-			navText: ['<span class="ion-ios-arrow-back">', '<span class="ion-ios-arrow-forward">'],
-			responsive:{
-				0:{
-					items: 1
-				},
-				600:{
-					items: 1
-				},
-				1000:{
-					items: 1
-				}
-			}
-		});
-		$('.carousel-blog').owlCarousel({
-			autoplay: true,
-			loop: true,
-			items:1,
-			margin: 0,
-			stagePadding: 0,
-			nav: false,
-			dots: false,
-			navText: ['<span class="ion-ios-arrow-back">', '<span class="ion-ios-arrow-forward">'],
-			responsive:{
-				0:{
-					items: 1
-				},
-				600:{
-					items: 1
-				},
-				1000:{
-					items: 1
-				}
-			}
-		});
-
-	};
-	carousel();
+		}
+	});
+	$('.gallery-slider').append('<div class="nav-warp"><div class="sp-container"></div></div>');
+	$('.gallery-slider .owl-nav').appendTo('.nav-warp .sp-container');
 
 	
 
-	var contentWayPoint = function() {
-		var i = 0;
-		$('.ftco-animate').waypoint( function( direction ) {
 
-			if( direction === 'down' && !$(this.element).hasClass('ftco-animated') ) {
-				
-				i++;
-
-				$(this.element).addClass('item-animate');
-				setTimeout(function(){
-
-					$('body .ftco-animate.item-animate').each(function(k){
-						var el = $(this);
-						setTimeout( function () {
-							var effect = el.data('animate-effect');
-							if ( effect === 'fadeIn') {
-								el.addClass('fadeIn ftco-animated');
-							} else if ( effect === 'fadeInLeft') {
-								el.addClass('fadeInLeft ftco-animated');
-							} else if ( effect === 'fadeInRight') {
-								el.addClass('fadeInRight ftco-animated');
-							} else {
-								el.addClass('fadeInUp ftco-animated');
-							}
-							el.removeClass('item-animate');
-						},  k * 50, 'easeInOutExpo' );
-					});
-					
-				}, 100);
-				
-			}
-
-		} , { offset: '95%' } );
-	};
-	contentWayPoint();
-
-	var counter = function() {
-		
-		$('#section-counter').waypoint( function( direction ) {
-
-			if( direction === 'down' && !$(this.element).hasClass('ftco-animated') ) {
-
-				var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
-				$('.number').each(function(){
-					var $this = $(this),
-						num = $this.data('number');
-						console.log(num);
-					$this.animateNumber(
-					  {
-					    number: num,
-					    numberStep: comma_separator_number_step
-					  }, 7000
-					);
-				});
-				
-			}
-
-		} , { offset: '95%' } );
-
-	}
-	counter();
-
-
-	// magnific popup
-	$('.image-popup').magnificPopup({
-    type: 'image',
-    closeOnContentClick: true,
-    closeBtnInside: false,
-    fixedContentPos: true,
-    // mainClass: 'mfp-no-margins mfp-with-zoom', // class to remove default margin from left and right side
-     gallery: {
-      enabled: true,
-      navigateByImgClick: true,
-      preload: [0,1] // Will preload 0 - before current, and 1 after the current image
-    },
-    image: {
-      verticalFit: true
-    },
-    zoom: {
-      enabled: true,
-      duration: 300 // don't foget to change the duration also in CSS
-    }
-  });
-
-  $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
-    disableOn: 700,
-    type: 'iframe',
-    mainClass: 'mfp-fade',
-    removalDelay: 160,
-    preloader: false,
-
-    fixedContentPos: false
-  });
+	/*------------------
+		Accordions
+	--------------------*/
+	$('.panel-link').on('click', function (e) {
+		$('.panel-link').parent('.panel-header').removeClass('active');
+		var $this = $(this).parent('.panel-header');
+		if (!$this.hasClass('active')) {
+			$this.addClass('active');
+		}
+		e.preventDefault();
+	});
 
 
 
+	/*------------------
+		Circle progress
+	--------------------*/
+	$('.circle-progress').each(function() {
+		var cpvalue = $(this).data("cpvalue");
+		var cpcolor = $(this).data("cpcolor");
+		var cptitle = $(this).data("cptitle");
+		var cpid 	= $(this).data("cpid");
+
+		$(this).append('<div class="'+ cpid +' loader-circle"></div><div class="progress-info"><h4>'+ cpvalue +'%</h4><p>'+ cptitle +'</p></div>');
+
+		if (cpvalue < 100) {
+
+			$('.' + cpid).circleProgress({
+				value: '0.' + cpvalue,
+				size: 119,
+				thickness: 15,
+				fill: cpcolor,
+				emptyFill: "rgba(0, 0, 0, 0)"
+			});
+		} else {
+			$('.' + cpid).circleProgress({
+				value: 1,
+				size: 119,
+				thickness: 15,
+				fill: cpcolor,
+				emptyFill: "rgba(0, 0, 0, 0)"
+			});
+		}
+	});
+	
 
 })(jQuery);
-
